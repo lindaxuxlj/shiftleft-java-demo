@@ -1,0 +1,63 @@
+version: 2 # implies that check-analysis v2 should be used and therefore
+           # the --v2 flag can be omitted when running sl check-analysis
+source:
+  branch: main
+  scan: 1 # provide either branch or scan, not both
+build_rules:
+  - id: "Allow zero high SAST vulnerabilities" # is the build rule identifier
+    finding_types:
+      - vuln
+      - secret
+    severities:
+      - high
+      - critical
+    threshold: 0
+    options:
+      num_findings: 10 # return only 10 SAST findings
+  - id: "Allow zero reachable SCA vulnerabilities"
+    finding_types:
+      - oss_vuln
+    severities:
+      - critical
+      - high
+    threshold: 0
+    options:
+      reachable: true
+      num_findings: 10 # return 10 reachable SCA findings
+  - id: "Allow zero high severity container vulnerabilities"
+    finding_types:
+      - container
+    severities:
+      - critical
+      - high
+    threshold: 0
+    options:
+      num_findings: 10 # return 10 container findings
+  - id: "Example with mix and match findings"
+    type:
+      - SQL Injection
+      - Sensitive Data Leak
+    owasp_category:
+      - a1-injection
+    owasp_2021_category:
+      - a09-security-logging-and-monitoring-failures
+    severities:
+      - low
+      - medium
+      - high
+      - critical
+  - id: "Allow no license violations"
+    finding_types:
+      - license
+    licenses:
+      - allow:
+        - Apache-2.0, Public-Domain, Unknown
+      - block:
+        - GPL-3.0
+  - id: Identify security issues
+    finding_types:
+      - security_issue
+    severities:
+      - medium
+      - high
+    threshold: 100
